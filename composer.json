@@ -1,0 +1,50 @@
+{
+    "name": "studiostomp/craft-twig-linter",
+    "description": "A plugin for Craft CMS bringing sserbin/twig-linter to Craft CMS projects",
+    "type": "craft-plugin",
+    "version": "0.1.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "craft twig linter"
+    ],
+    "support": {
+        "docs": "https://github.com/studio-stomp/craft-twig-linter/blob/main/README.md",
+        "issues": "https://github.com/studio-stomp/craft-twig-linter/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Studio Stomp",
+            "homepage": "https://studiostomp.nl"
+        }
+    ],
+    "require": {
+        "php": "7.4.*",
+        "craftcms/cms": "^3.0.0",
+        "sserbin/twig-linter": "^2.1"
+    },
+    "require-dev": {
+        "craftcms/cms": "^3.2.0",
+        "codeception/codeception": "^3.1",
+        "roave/security-advisories": "dev-master",
+        "studio-stomp/phpstan-craftcms": "^0.1.0",
+        "vlucas/phpdotenv": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "studiostomp\\crafttwiglinter\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Craft Twig Linter",
+        "handle": "craft-twig-linter",
+        "developer": "Studio Stomp",
+        "developerUrl": "https://studiostomp.nl",
+        "documentationUrl": "https://github.com/studio-stomp/craft-twig-linter/blob/main/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/studio-stomp/craft-twig-linter/main/CHANGELOG.md",
+        "class": "studiostomp\\crafttwiglinter\\CraftTwigLinter"
+    }
+}

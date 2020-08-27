@@ -1,0 +1,8 @@
+includes:
+    - vendor/studio-stomp/phpstan-craftcms/phpstan.neon
+
+parameters:
+    scanDirectories:
+        - tests/_craft/storage/runtime
+
+    level: 1
