@@ -1,6 +1,6 @@
 {
-    "name": "studiostomp/craft-twig-linter",
-    "description": "A plugin for Craft CMS bringing sserbin/twig-linter to Craft CMS projects",
+    "name": "studio-stomp/craft-twig-linter",
+    "description": "A plugin for Craft CMS bringing `sserbin/twig-linter` to Craft CMS projects",
     "type": "craft-plugin",
     "version": "0.1.0",
     "keywords": [
