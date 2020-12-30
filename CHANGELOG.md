@@ -4,8 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/studio-stomp/craft-twig-linter/compare/0.1.0...develop)
+## [Unreleased](https://github.com/studio-stomp/craft-twig-linter/compare/0.2.0...develop)
 
+## [0.2.0](https://github.com/studio-stomp/craft-twig-linter/compare/0.1.0...0.2.0) - 2020-12-30
 ### Changed
 - Refactored from Plugin to Module
     - Plugin is really for integration functionality within the CMS, whilst this code belongs in the release process of the code
