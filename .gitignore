@@ -5,12 +5,17 @@
 
 # COMPOSER
 /vendor
+composer.lock
 
 # BUILD FILES
 /bower_components/*
 /node_modules/*
 /build/*
 /yarn-error.log
+
+# DOCKER
+.env.docker.local
+docker-compose.override.yml
 
 # MISC FILES
 .cache

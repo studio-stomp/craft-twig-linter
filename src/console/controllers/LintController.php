@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 /**
- * Craft Twig Linter plugin for Craft CMS 3.x
+ * Craft Twig Linter for Craft CMS 3.x
  *
- * A plugin for Craft CMS bringing sserbin/twig-linter to Craft CMS projects
+ * A module for Craft CMS bringing sserbin/twig-linter to Craft CMS projects
  *
  * @link      https://studiostomp.nl
  * @copyright Copyright (c) 2020 Studio Stomp
@@ -11,15 +11,21 @@ declare(strict_types=1);
 
 namespace studiostomp\crafttwiglinter\console\controllers;
 
+use craft\helpers\ArrayHelper;
 use craft\helpers\Console;
+use craft\web\View;
 use Exception;
 use PackageVersions\Versions;
+use ReflectionProperty;
 use Sserbin\TwigLinter\Command\LintCommand;
 
 use Craft;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
 use yii\console\Controller;
+use yii\console\ExitCode;
+use yii\console\widgets\Table;
 
 /**
  * Lint Command
@@ -61,7 +67,40 @@ final class LintController extends Controller
      */
     public function actionIndex(string ...$paths): int
     {
-        $command = new LintCommand(Craft::$app->getView()->getTwig());
+        $consoleApp = Craft::$app;
+
+        // Also create a Web Application to get all template paths for web-only modules and plugins
+        $config = ArrayHelper::merge(
+            [
+                'components' => [
+                    'config' => Craft::$app->getConfig(),
+                ],
+            ],
+            require Craft::$app->getBasePath() . '/config/app.php',
+            require Craft::$app->getBasePath() . '/config/app.web.php',
+            Craft::$app->getConfig()->getConfigFromFile('app'),
+            Craft::$app->getConfig()->getConfigFromFile('app.web'),
+            [
+                'isInstalled' => false,
+            ]
+        );
+        $webApp = Craft::createObject($config);
+
+        $consoleView = $consoleApp->getView();
+        $webView = $webApp->getView();
+
+        $reflected_property = new ReflectionProperty(View::class, '_twigExtensions');
+        $reflected_property->setAccessible(true);
+        $registered_extensions = ArrayHelper::merge(
+            $reflected_property->getValue($consoleView),
+            $reflected_property->getValue($webView),
+        );
+        $reflected_property->setValue($webView, $registered_extensions);
+
+        // Restore current app (which should be console, but for restoring doesn't matter)
+        Craft::$app = $consoleApp;
+
+        $command = new LintCommand($webView->createTwig());
 
         $app = new Application('twig-linter', Versions::getVersion('sserbin/twig-linter'));
         $app->setAutoExit(false);
@@ -74,12 +113,65 @@ final class LintController extends Controller
             '--format' => 'json',
         ]);
 
+        $capturing_output = new BufferedOutput();
+
         try {
-            return $app->run($input);
+            $exit_code = $app->run($input, $capturing_output);
         } catch (Exception $e) {
             Console::error($e->getMessage());
 
             throw $e;
         }
+
+        // Gather the results
+        $results = json_decode(
+            $capturing_output->fetch() ?: '[]',
+            true,
+            512,
+            JSON_THROW_ON_ERROR
+        );
+
+        // Filter out only the files with errors
+        $errors = array_filter($results, static function (array $result) {
+            return false === $result['valid'];
+        });
+
+        $count_results = count($results);
+        $count_errors = count($errors);
+
+        if ($count_errors) {
+            $result_message = "ERRORS (total {$count_results} files, {$count_errors} errors)" ;
+            $ansi = [
+                Console::FG_RED,
+            ];
+        } else {
+            $result_message = "OK  (total {$count_results} files checked)";
+            $ansi = [
+                Console::FG_GREEN,
+            ];
+        }
+
+        echo $this->ansiFormat($result_message, ...$ansi) . PHP_EOL;
+
+        if ($count_errors) {
+            // Output an overview of the errors
+            $error_table = new Table();
+            echo $error_table->setHeaders(['Error', 'Line', 'File'])
+                             ->setRows(
+                                 array_map(
+                                     static function ($error_info) {
+                                         return [
+                                             $error_info['message'],
+                                             $error_info['line'],
+                                             $error_info['file'],
+                                         ];
+                                     },
+                                     $errors
+                                 )
+                             )
+                             ->run();
+        }
+
+        return $exit_code;
     }
 }

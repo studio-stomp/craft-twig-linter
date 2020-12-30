@@ -1,1 +1,10 @@
-Im a twig template and here's a custom registered function result {{ do_foo_bar() }}
+Im a twig template and here's a custom registered function result {{ do_foo_bar() }} and a function result from registered modules:
+
+<dl>
+    <dt>General</dt>
+    <dd>{{ general() }}</dd>
+    <dt>Web</dt>
+    <dd>{{ web() }}</dd>
+    <dt>Console</dt>
+    <dd>{{ console() }}</dd>
+</dl>

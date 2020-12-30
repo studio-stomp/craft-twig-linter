@@ -1,0 +1,25 @@
+version: "3.7"
+
+services:
+  xphp:
+    build:
+      dockerfile: Dockerfile
+      context: ./.docker/xphp
+    container_name: "${PROJECT_NAME}_xphp"
+    volumes:
+      - "./:/app:delegated"
+
+  test_db:
+    image: mysql:5.7
+    container_name: "${PROJECT_NAME}_test_db"
+    environment:
+      MYSQL_DATABASE: ${PROJECT_NAME}_testing
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - test_db:/var/lib/mysql
+
+volumes:
+  test_db:
+    driver: local
