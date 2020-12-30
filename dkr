@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+# Define the command to execute so can be reused multiple times
+COMPOSE="docker-compose --env-file .env.docker.local -f docker-compose.yml -f docker-compose.override.yml"
+
+# If the amount of arguments passed onto this script is greater than 0
+if [[ $# -gt 0 ]]; then
+
+    # If "php" is used, pass-thru to php container
+    # inside a new container
+    if [ "$1" == "php" ]; then
+        shift 1
+        ${COMPOSE} run --rm xphp php "$@"
+
+    # If "craft" is used, pass-thru to php container
+    # inside a new container
+    elif [ "$1" == "craft" ]; then
+        shift 1
+        ${COMPOSE} run --rm xphp php ./craft "$@"
+
+     # Else, pass-thru args to docker-compose
+    else
+        ${COMPOSE} "$@"
+    fi
+
+else
+    ${COMPOSE} ps
+fi

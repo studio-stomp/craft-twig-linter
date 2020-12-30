@@ -19,13 +19,10 @@ final class LintControllerTest extends ConsoleTest
      * @dataProvider providesPaths
      *
      * @param array $paths
-     *
-     * @throws Exception
      */
     public function testLinter(array $paths): void
     {
-        // Register custom function
-        Craft::$app->view->registerTwigExtension(
+        Craft::$app->getView()->registerTwigExtension(
             new class extends AbstractExtension {
                 public function getFunctions(): array
                 {
@@ -48,7 +45,11 @@ final class LintControllerTest extends ConsoleTest
             self::fail('Could not instantiate Subject under Test');
         }
 
-        $actual = $sut->actionIndex(...$paths);
+        try {
+            $actual = $sut->actionIndex(...$paths);
+        } catch (Exception $e) {
+            self::fail($e->getMessage());
+        }
 
         self::assertEquals(ExitCode::OK, $actual);
     }
@@ -60,7 +61,6 @@ final class LintControllerTest extends ConsoleTest
                 './tests/_craft/templates/standard_functionality.twig',
             ],
         ];
-
         yield 'single directory, multiple files' => [
             'paths' =>  [
                 './tests/_craft/templates/dir_1',
@@ -78,6 +78,72 @@ final class LintControllerTest extends ConsoleTest
             'paths' => [
                 './tests/_craft/templates/craft_registered_functionality.twig',
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider providesFaultyPaths
+     *
+     * @param array $paths
+     * @param string $expected
+     */
+    public function testLinterOnFaultyTemplates(array $paths, string $expected): void {
+        $this->expectOutputRegex($expected);
+
+        $sut = new LintController(
+            'craft-twig-linter',
+            CraftTwigLinter::getInstance(),
+            []
+        );
+
+        if (!$sut) {
+            self::fail('Could not instantiate Subject under Test');
+        }
+
+        try {
+            $actual = $sut->actionIndex(...$paths);
+        } catch (Exception $e) {
+            self::fail($e->getMessage());
+        }
+
+        self::assertNotEquals(ExitCode::OK, $actual);
+    }
+
+    public function providesFaultyPaths(): Generator
+    {
+        yield 'Do not use `===`' => [
+            'paths' => [
+                './tests/_craft/templates/faulty/comparison_strictly.twig',
+            ],
+            'expected' => '~Did you try to use "===" or "!==" for strict comparison\?~',
+        ];
+
+        yield 'Undefined filter' => [
+            'paths' => [
+                './tests/_craft/templates/faulty/filter.twig',
+            ],
+            'expected' => '~Unknown "idonotexist" filter~',
+        ];
+
+        yield 'Undefined function' => [
+            'paths' => [
+                './tests/_craft/templates/faulty/function.twig',
+            ],
+            'expected' => '~Unknown "idonotexist" function~',
+        ];
+
+        yield 'Undefined tag' => [
+            'paths' => [
+                './tests/_craft/templates/faulty/tag.twig',
+            ],
+            'expected' => '~Unknown "idonotexist" tag~',
+        ];
+
+        yield 'Undefined test' => [
+            'paths' => [
+                './tests/_craft/templates/faulty/test.twig',
+            ],
+            'expected' => '~Unknown "idonotexist" test~',
         ];
     }
 }
