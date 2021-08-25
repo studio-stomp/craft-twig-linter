@@ -20,16 +20,18 @@
         }
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^7.4|^8.0",
         "ext-json": "*",
         "craftcms/cms": "^3.5.0",
         "sserbin/twig-linter": "^2.1"
     },
     "require-dev": {
-        "codeception/codeception": "^3.1",
-        "roave/security-advisories": "dev-master",
-        "studio-stomp/phpstan-craftcms": "^0.1.0",
-        "vlucas/phpdotenv": "^3.0"
+        "codeception/codeception": "^4.0",
+        "roave/security-advisories": "dev-latest",
+        "studio-stomp/phpstan-craftcms": "^0.2",
+        "vlucas/phpdotenv": "^3.0",
+        "codeception/module-asserts": "^1.3",
+        "codeception/module-yii2": "^1.1"
     },
     "autoload": {
         "psr-4": {
