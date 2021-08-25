@@ -23,7 +23,7 @@
         "php": "^7.4|^8.0",
         "ext-json": "*",
         "craftcms/cms": "^3.5.0",
-        "sserbin/twig-linter": "^2.1"
+        "sserbin/twig-linter": "^3.0"
     },
     "require-dev": {
         "codeception/codeception": "^4.0",
