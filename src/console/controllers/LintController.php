@@ -67,6 +67,7 @@ final class LintController extends Controller
      */
     public function actionIndex(string ...$paths): int
     {
+        // Get current app as it's a properly registered console app
         $consoleApp = Craft::$app;
 
         // Also create a Web Application to get all template paths for web-only modules and plugins
@@ -75,16 +76,20 @@ final class LintController extends Controller
                 'components' => [
                     'config' => Craft::$app->getConfig(),
                 ],
+                'isInstalled' => true,
+                'vendorPath' => $consoleApp->getVendorPath(),
             ],
             require Craft::$app->getBasePath() . '/config/app.php',
             require Craft::$app->getBasePath() . '/config/app.web.php',
             Craft::$app->getConfig()->getConfigFromFile('app'),
-            Craft::$app->getConfig()->getConfigFromFile('app.web'),
-            [
-                'isInstalled' => false,
-            ]
+            Craft::$app->getConfig()->getConfigFromFile('app.web')
         );
+
+        /** @var \craft\web\Application $webApp */
         $webApp = Craft::createObject($config);
+        // Also load all plugins, i.e. plugins that load
+        // extension specifically in site or cp context
+        $webApp->getPlugins()->loadPlugins();
 
         $consoleView = $consoleApp->getView();
         $webView = $webApp->getView();

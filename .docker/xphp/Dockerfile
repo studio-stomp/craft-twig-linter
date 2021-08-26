@@ -1,5 +1,5 @@
-FROM php:7.4-fpm-alpine
-ENV XDEBUG_VERSION 3.0.1
+FROM php:8.0-fpm-alpine
+ENV XDEBUG_VERSION 3.0.4
 # Update system
 RUN apk update && apk upgrade \
     && apk add --no-cache ${PHPIZE_DEPS} procps \
@@ -36,10 +36,5 @@ RUN sed -e 's/max_execution_time = 30/max_execution_time = 300/' -i ${PHP_INI_DI
 
 # Xdebug config
 COPY xdebug.ini $PHP_INI_DIR/conf.d/zz-xdebug.ini
-
-# Fix iconv errors
-# @see https://github.com/docker-library/php/issues/240#issuecomment-353678474
-RUN apk add gnu-libiconv --update-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
 WORKDIR /app

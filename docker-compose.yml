@@ -10,7 +10,7 @@ services:
       - "./:/app:delegated"
 
   test_db:
-    image: mysql:5.7
+    image: mysql
     container_name: "${PROJECT_NAME}_test_db"
     environment:
       MYSQL_DATABASE: ${PROJECT_NAME}_testing

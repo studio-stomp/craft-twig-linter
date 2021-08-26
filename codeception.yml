@@ -18,11 +18,7 @@ modules:
       configFile: 'tests/_craft/config/test.php'
       projectConfig: {}
       migrations: []
-      plugins:
-        craft-twig-linter:
-          class: '\studiostomp\crafttwiglinter\CraftTwigLinter'
-          handle: craft-twig-linter
-      cleanup: false
+      cleanup: true
       transaction: true
-      dbSetup: {clean: false, setupCraft: false}
+      dbSetup: {clean: true, setupCraft: true}
       fullMock: false
