@@ -27,11 +27,11 @@
     },
     "require-dev": {
         "codeception/codeception": "^4.0",
-        "roave/security-advisories": "dev-latest",
-        "studio-stomp/phpstan-craftcms": "^0.2",
-        "vlucas/phpdotenv": "^3.0",
         "codeception/module-asserts": "^1.3",
-        "codeception/module-yii2": "^1.1"
+        "codeception/module-yii2": "^1.1",
+        "roave/security-advisories": "dev-latest",
+        "studio-stomp/phpstan-craftcms": "^0.3",
+        "vlucas/phpdotenv": "^3.0"
     },
     "autoload": {
         "psr-4": {
@@ -42,5 +42,11 @@
         "psr-4": {
             "tests\\modules\\": "tests/_craft/modules/"
         }
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "extra": {},
+    "config": {
+        "sort-packages": true
     }
 }

@@ -1,8 +1,8 @@
 includes:
-    - vendor/studio-stomp/phpstan-craftcms/phpstan.neon
+    - vendor/studio-stomp/phpstan-craftcms/extension.neon
 
 parameters:
-    scanDirectories:
-        - tests/_craft/storage/runtime
-
-    level: 1
+    level: max
+    paths:
+        - src
+        - tests/unit
