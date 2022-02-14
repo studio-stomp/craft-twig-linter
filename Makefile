@@ -40,11 +40,11 @@ services-testing:	## Serve a testing environment through Docker services
 services-testing:
 	$(info Starting testing environment...)
 	./dkr stop
-	./dkr up -d webserver xphp test_db
+	./dkr up -d xphp test_db
 
 .PHONY: test
 test:	## Run all test suites
-test:	vendor services-testing test-unit test-functional
+test:	vendor services-testing test-unit
 	$(info Running all test suites...)
 
 .PHONY: test-unit
@@ -53,17 +53,10 @@ test-unit:	vendor services-testing
 	$(info Running all unit test suites...)
 	./dkr run --rm xphp vendor/bin/codecept run unit
 
-.PHONY: test-functional
-test-functional:	## Run all functional test suites
-test-functional:	vendor services-testing
-	$(info Running all functional test suites...)
-	./dkr run --rm xphp vendor/bin/codecept run functional
-
 #
 # Rules from files (non-phony targets)
 #---------------------------------------------------------------------------
 vendor: composer.lock
-	# @todo:refactor: Make this shell independent, actually independent on how Composer is installed locally (but how?)
-	zsh -i -c 'composer validate --no-check-publish --no-check-all'
-	zsh -i -c 'composer install'
+	composer validate --no-check-publish --no-check-all
+	composer install
 
