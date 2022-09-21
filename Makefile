@@ -51,7 +51,7 @@ test:	vendor services-testing test-unit
 test-unit:	## Run all unit test suites
 test-unit:	vendor services-testing
 	$(info Running all unit test suites...)
-	./dkr run --rm xphp vendor/bin/codecept run unit
+	./dkr run --rm xphp php -dxdebug.mode=off vendor/bin/codecept run unit
 
 #
 # Rules from files (non-phony targets)

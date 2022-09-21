@@ -13,6 +13,7 @@ namespace studiostomp\crafttwiglinter\console\controllers;
 
 use craft\helpers\ArrayHelper;
 use craft\helpers\Console;
+use craft\web\Request;
 use craft\web\View;
 use Exception;
 use PackageVersions\Versions;
@@ -23,8 +24,8 @@ use Craft;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Twig\Extension\ExtensionInterface;
 use yii\console\Controller;
-use yii\console\ExitCode;
 use yii\console\widgets\Table;
 
 /**
@@ -69,36 +70,24 @@ final class LintController extends Controller
     {
         // Get current app as it's a properly registered console app
         $consoleApp = Craft::$app;
+        $consoleView = $consoleApp->getView();
 
         // Also create a Web Application to get all template paths for web-only modules and plugins
-        $config = ArrayHelper::merge(
-            [
-                'components' => [
-                    'config' => Craft::$app->getConfig(),
-                ],
-                'isInstalled' => true,
-                'vendorPath' => $consoleApp->getVendorPath(),
-            ],
-            require Craft::$app->getBasePath() . '/config/app.php',
-            require Craft::$app->getBasePath() . '/config/app.web.php',
-            Craft::$app->getConfig()->getConfigFromFile('app'),
-            Craft::$app->getConfig()->getConfigFromFile('app.web')
-        );
+        $web_app_config = $this->retrieveWebAppConfig($consoleApp->getVendorPath());
 
         /** @var \craft\web\Application $webApp */
-        $webApp = Craft::createObject($config);
-        // Also load all plugins, i.e. plugins that load
-        // extension specifically in site or cp context
-        $webApp->getPlugins()->loadPlugins();
-
-        $consoleView = $consoleApp->getView();
+        $webApp = Craft::createObject($web_app_config);
         $webView = $webApp->getView();
 
         $reflected_property = new ReflectionProperty(View::class, '_twigExtensions');
         $reflected_property->setAccessible(true);
+        /** @var array<ExtensionInterface> $console_twig_extensions */
+        $console_twig_extensions = $reflected_property->getValue($consoleView);
+        /** @var array<ExtensionInterface> $web_twig_extensions */
+        $web_twig_extensions   = $reflected_property->getValue($webView);
         $registered_extensions = ArrayHelper::merge(
-            $reflected_property->getValue($consoleView),
-            $reflected_property->getValue($webView),
+            $console_twig_extensions,
+            $web_twig_extensions
         );
         $reflected_property->setValue($webView, $registered_extensions);
 
@@ -178,5 +167,40 @@ final class LintController extends Controller
         }
 
         return $exit_code;
+    }
+
+    /**
+     * @return array{'components':array,'class':class-string}
+     */
+    private function retrieveWebAppConfig(string $vendor_path): array
+    {
+        return ArrayHelper::merge(
+            require Craft::$app->getBasePath() . '/config/app.php',
+            require Craft::$app->getBasePath() . '/config/app.web.php',
+            Craft::$app->getConfig()->getConfigFromFile('app'),
+            Craft::$app->getConfig()->getConfigFromFile('app.web'),
+            [
+                'components' => [
+                    'config' => Craft::$app->getConfig(),
+                    'request' => static function() {
+                        // Set a request uri to allow instantiation of Request class; it depends on a URI, looked for in also REQUEST_URI
+                        $_SERVER['REQUEST_URI'] = 'https://example.com';
+
+                        // Let Craft build the object
+                        /** @var craft\web\Request $request */
+                        $request = Craft::createObject([
+                            'class' => Request::class,
+                        ]);
+
+                        // Force the request to be a web request, otherwise this will be determined from current runtime environment
+                        $request->setIsConsoleRequest(false);
+
+                        return $request;
+                    },
+                ],
+                'isInstalled' => true,
+                'vendorPath' => $vendor_path,
+            ]
+        );
     }
 }

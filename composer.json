@@ -40,13 +40,18 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "tests\\modules\\": "tests/_craft/modules/"
+            "tests\\modules\\": "tests/_craft/modules/",
+            "studiostomp\\crafttwiglintertests\\": "tests/"
         }
     },
     "prefer-stable": true,
     "minimum-stability": "dev",
     "extra": {},
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
 }
