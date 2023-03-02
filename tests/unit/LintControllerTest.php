@@ -18,7 +18,7 @@ final class LintControllerTest extends ConsoleTest
     /**
      * @dataProvider providesPaths
      *
-     * @param array $paths
+     * @param array<int, string> $paths
      */
     public function testLinter(array $paths): void
     {
@@ -35,15 +35,16 @@ final class LintControllerTest extends ConsoleTest
             }
         );
 
+        $module = CraftTwigLinter::getInstance();
+        if (null === $module) {
+            $this->fail('Could not instantiate Module');
+        }
+
         $sut = new LintController(
             'craft-twig-linter',
-            CraftTwigLinter::getInstance(),
+            $module,
             []
         );
-
-        if (!$sut) {
-            self::fail('Could not instantiate Subject under Test');
-        }
 
         try {
             $actual = $sut->actionIndex(...$paths);
@@ -54,6 +55,9 @@ final class LintControllerTest extends ConsoleTest
         self::assertEquals(ExitCode::OK, $actual);
     }
 
+    /**
+     * @return \Generator<array<string, array<int, string>>>
+     */
     public function providesPaths(): Generator
     {
         yield 'single file' => [
@@ -84,21 +88,22 @@ final class LintControllerTest extends ConsoleTest
     /**
      * @dataProvider providesFaultyPaths
      *
-     * @param array $paths
+     * @param array<int, string> $paths
      * @param string $expected
      */
     public function testLinterOnFaultyTemplates(array $paths, string $expected): void {
         $this->expectOutputRegex($expected);
 
+        $module = CraftTwigLinter::getInstance();
+        if (null === $module) {
+            $this->fail('Could not instantiate Module');
+        }
+
         $sut = new LintController(
             'craft-twig-linter',
-            CraftTwigLinter::getInstance(),
+            $module,
             []
         );
-
-        if (!$sut) {
-            self::fail('Could not instantiate Subject under Test');
-        }
 
         try {
             $actual = $sut->actionIndex(...$paths);
@@ -109,6 +114,9 @@ final class LintControllerTest extends ConsoleTest
         self::assertNotEquals(ExitCode::OK, $actual);
     }
 
+    /**
+     * @return \Generator<array<string, array<int, string>|string>>
+     */
     public function providesFaultyPaths(): Generator
     {
         yield 'Do not use `===`' => [
