@@ -16,7 +16,7 @@ To install the module, follow these instructions.
 
 2. Then tell Composer to load the plugin:
 
-        composer require --dev studio-stomp/craft-twig-linter
+        composer require studio-stomp/craft-twig-linter
 
 3. Load the module in the application config:
 
