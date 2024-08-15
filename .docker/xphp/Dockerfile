@@ -1,7 +1,9 @@
-FROM php:8.0-fpm-alpine
-ENV XDEBUG_VERSION 3.1.6
+FROM php:8.2-fpm-alpine
+ENV XDEBUG_VERSION=3.3.2
 # Update system
 RUN apk update && apk upgrade \
+    && apk add --update linux-headers \
+    && apk add --no-cache mysql-client \
     && apk add --no-cache ${PHPIZE_DEPS} procps \
     && apk add --no-cache libxml2-dev \
                           freetype \
@@ -14,6 +16,7 @@ RUN apk update && apk upgrade \
                            libzip-dev \
                            oniguruma-dev \
                            icu-dev \
+			   icu-data-full \
     && docker-php-ext-configure gd \
                            --with-freetype=/usr/include/ \
                            --with-jpeg=/usr/include/ \
@@ -32,11 +35,10 @@ RUN apk del ${PHPIZE_DEPS} \
 # Use the default develop configuration
 RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
-# Increase maximum execution time
-RUN sed -e 's/max_execution_time = 30/max_execution_time = 300/' -i ${PHP_INI_DIR}/php.ini
+# Custom PHP config, overruling defaults
+COPY custom.ini $PHP_INI_DIR/conf.d/zz-custom.ini
 
 # Xdebug config
-COPY custom.ini $PHP_INI_DIR/conf.d/zz-custom.ini
 COPY xdebug.ini $PHP_INI_DIR/conf.d/zz-xdebug.ini
 
 WORKDIR /app

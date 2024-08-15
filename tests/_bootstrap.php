@@ -14,6 +14,11 @@ define('CRAFT_MIGRATIONS_PATH', __DIR__ . '/_craft/migrations');
 define('CRAFT_TRANSLATIONS_PATH', __DIR__ . '/_craft/translations');
 define('CRAFT_VENDOR_PATH', dirname(__DIR__) . '/vendor');
 
-$devMode = true;
-
 TestSetup::configureCraft();
+
+// If @webroot does not get set, and it seems it doesn't get set by any of the
+// Craft CMS testing bootstrapping, then it resolves to current directory,
+// which in turn means for instance the `cpresources` directory gets created in
+// the project root as testing is usually started in the project root.
+// Define a hard location for webroot for all functional tests.
+Craft::setAlias('@webroot', CRAFT_TESTS_PATH . DIRECTORY_SEPARATOR . '_output' . DIRECTORY_SEPARATOR . 'web');

@@ -18,6 +18,7 @@ use craft\web\View;
 use Exception;
 use PackageVersions\Versions;
 use ReflectionProperty;
+use RuntimeException;
 use Sserbin\TwigLinter\Command\LintCommand;
 
 use Craft;
@@ -27,6 +28,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 use Twig\Extension\ExtensionInterface;
 use yii\console\Controller;
 use yii\console\widgets\Table;
+use yii\helpers\BaseConsole;
 
 /**
  * Lint Command
@@ -73,6 +75,7 @@ final class LintController extends Controller
         $consoleView = $consoleApp->getView();
 
         // Also create a Web Application to get all template paths for web-only modules and plugins
+        /** @var array{class:class-string<mixed>} $web_app_config */
         $web_app_config = $this->retrieveWebAppConfig($consoleApp->getVendorPath());
 
         /** @var \craft\web\Application $webApp */
@@ -125,10 +128,17 @@ final class LintController extends Controller
             JSON_THROW_ON_ERROR
         );
 
+        if (!is_array($results)) {
+            Console::error('Expected array');
+
+            throw new RuntimeException('Expected array');
+        }
+
         // Filter out only the files with errors
-        $errors = array_filter($results, static function (array $result) {
-            return false === $result['valid'];
-        });
+        $errors = array_filter(
+            $results,
+            static fn (array $result) => false === $result['valid']
+        );
 
         $count_results = count($results);
         $count_errors = count($errors);
@@ -136,12 +146,12 @@ final class LintController extends Controller
         if ($count_errors) {
             $result_message = "ERRORS (total {$count_results} files, {$count_errors} errors)" ;
             $ansi = [
-                Console::FG_RED,
+                BaseConsole::FG_RED,
             ];
         } else {
             $result_message = "OK  (total {$count_results} files checked)";
             $ansi = [
-                Console::FG_GREEN,
+                BaseConsole::FG_GREEN,
             ];
         }
 
@@ -170,7 +180,7 @@ final class LintController extends Controller
     }
 
     /**
-     * @return array{'components':array,'class':class-string}
+     * @return array<mixed>
      */
     private function retrieveWebAppConfig(string $vendor_path): array
     {
@@ -187,7 +197,7 @@ final class LintController extends Controller
                         $_SERVER['REQUEST_URI'] = 'https://example.com';
 
                         // Let Craft build the object
-                        /** @var craft\web\Request $request */
+                        /** @var Request $request */
                         $request = Craft::createObject([
                             'class' => Request::class,
                         ]);
