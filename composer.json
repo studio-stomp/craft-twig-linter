@@ -22,13 +22,14 @@
     "require": {
         "php": "^8.2",
         "ext-json": "*",
-        "craftcms/cms": "^4.0.0",
+        "craftcms/cms": "^4.0|^5.0",
         "sserbin/twig-linter": "^3.0"
     },
     "require-dev": {
         "codeception/codeception": "^5.1",
         "codeception/module-asserts": "^3.0",
         "codeception/module-yii2": "^1.1",
+        "craftcms/rector": "dev-main",
         "roave/security-advisories": "dev-latest",
         "studio-stomp/phpstan-craftcms": "dev-main",
         "vlucas/phpdotenv": "^5.4"

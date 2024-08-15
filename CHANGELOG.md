@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## [Unreleased](https://github.com/studio-stomp/craft-twig-linter/compare/0.4.1...develop)
 
+### Changed
+- feat: add support for Craft CMS 5
+
 ## [0.4.1](https://github.com/studio-stomp/craft-twig-linter/compare/0.4.0...0.4.1) - 2024-08-15
 ### Changed
 - feat: upgrade tests to Codeception 5
