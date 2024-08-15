@@ -19,6 +19,7 @@ docker-compose.override.yml
 
 # TESTS
 tests/_support/_generated/
+tests/_craft/config/project/
 
 # MISC FILES
 .cache
