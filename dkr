@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Define the command to execute so can be reused multiple times
-COMPOSE="docker-compose --env-file .env.docker.local -f docker-compose.yml -f docker-compose.override.yml"
+COMPOSE="docker compose --env-file .env.docker.local -f docker-compose.yml -f docker-compose.override.yml"
 
 # If the amount of arguments passed onto this script is greater than 0
 if [[ $# -gt 0 ]]; then
@@ -12,13 +12,17 @@ if [[ $# -gt 0 ]]; then
         shift 1
         ${COMPOSE} run --rm xphp php "$@"
 
+    elif [ "$1" == "xphp" ]; then
+        shift 1
+        ${COMPOSE} run --rm -e PHP_IDE_CONFIG="serverName=cli" xphp php -dxdebug.start_with_request=yes "$@"
+
     # If "craft" is used, pass-thru to php container
     # inside a new container
     elif [ "$1" == "craft" ]; then
         shift 1
         ${COMPOSE} run --rm xphp php ./craft "$@"
 
-     # Else, pass-thru args to docker-compose
+     # Else, pass-thru args to docker compose
     else
         ${COMPOSE} "$@"
     fi

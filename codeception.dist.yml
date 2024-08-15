@@ -4,12 +4,14 @@ paths:
   log: tests/_output
   data: tests/_data
   support: tests/_support
+  output: tests/_output
   envs: tests/_envs
-bootstrap: _bootstrap.php
 coverage:
   enabled: true
   include:
     - src/*
+bootstrap: _bootstrap.php
+settings:
 params:
   - tests/.env
 modules:

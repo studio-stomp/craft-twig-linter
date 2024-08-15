@@ -1,10 +1,10 @@
-# Craft Twig Linter plugin for Craft CMS 3.x
+# Craft Twig Linter plugin for Craft CMS 5.x
 
 A module for Craft CMS bringing `sserbin/twig-linter` to Craft CMS projects
 
 ## Requirements
 
-This plugin requires Craft CMS 3.5.0 or later.
+This plugin requires Craft CMS 5.0.0 or later.
 
 ## Installation
 
@@ -39,14 +39,14 @@ return [
 Craft Twig Linter works by:
 - Instantiating the Symfony command from `sserbin/twig-linter`
 - Instantiating a Symfony console app for running the command
-- Instantiating a WebApplication for the project (command runs in context of ConsoleApplication)
-- Aggregate all registered Twig extension from both Console and Web (registered by both Craft Plugins as well as Craft Modules)
+- Instantiating a WebApplication for the project (the module runs in context of ConsoleApplication)
+- Aggregate all registered Twig extension from both Console and Web (registered by both Craft Plugins and Craft Modules)
 - Create a new Twig environment with all the collected extensions
 - running the Symfony app
 
 ## Configuring Craft Twig Linter
 
-Currently there is no configuration
+Currently, there is no configuration
 
 ## Using Craft Twig Linter
 
