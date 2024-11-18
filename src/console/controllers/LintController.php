@@ -82,16 +82,27 @@ final class LintController extends Controller
         $webApp = Craft::createObject($web_app_config);
         $webView = $webApp->getView();
 
-        $reflected_property = new ReflectionProperty(View::class, '_twigExtensions');
-        $reflected_property->setAccessible(true);
-        /** @var array<ExtensionInterface> $console_twig_extensions */
-        $console_twig_extensions = $reflected_property->getValue($consoleView);
-        /** @var array<ExtensionInterface> $web_twig_extensions */
-        $web_twig_extensions   = $reflected_property->getValue($webView);
-        $registered_extensions = ArrayHelper::merge(
-            $console_twig_extensions,
-            $web_twig_extensions
-        );
+        $registered_extensions = [];
+
+        if (property_exists(View::class, '_twigExtensions')) {
+            $property_names = ['_twigExtensions'];
+        } else {
+            // Since Craft CMS 4.13.0 extensions are split.
+            $property_names = ['_cpTwigExtensions', '_siteTwigExtensions'];
+        }
+
+        foreach ([$consoleView, $webView] as $view) {
+            foreach ($property_names as $property) {
+                $reflected_property = new ReflectionProperty(View::class, $property);
+                $reflected_property->setAccessible(true);
+                /** @var array<ExtensionInterface> $twig_extensions */
+                $twig_extensions = $reflected_property->getValue($view);
+                $registered_extensions = ArrayHelper::merge(
+                    $registered_extensions,
+                    $twig_extensions,
+                );
+            }
+        }
         $reflected_property->setValue($webView, $registered_extensions);
 
         // Restore current app (which should be console, but for restoring doesn't matter)
