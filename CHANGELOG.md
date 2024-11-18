@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/studio-stomp/craft-twig-linter/compare/0.5.0...develop)
+## [Unreleased](https://github.com/studio-stomp/craft-twig-linter/compare/0.6.0...develop)
+
+## [0.6.0](https://github.com/studio-stomp/craft-twig-linter/compare/0.5.0...0.6.0) - 2024-11-18
+### Changed
+- feat: support Craft CMS 4.13.0+ / 5.5.0+ 
 
 ## [0.5.0](https://github.com/studio-stomp/craft-twig-linter/compare/0.4.1...0.5.0) - 2024-08-15
 ### Changed
