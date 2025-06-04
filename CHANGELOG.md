@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased](https://github.com/studio-stomp/craft-twig-linter/compare/0.6.0...develop)
+## [Unreleased](https://github.com/studio-stomp/craft-twig-linter/compare/0.6.1...develop)
+
+## [0.6.1](https://github.com/studio-stomp/craft-twig-linter/compare/0.6.0...0.6.1) - 2025-06-04
+### Changed
+- refactor: replace use of previously deprecated and now removed package
 
 ## [0.6.0](https://github.com/studio-stomp/craft-twig-linter/compare/0.5.0...0.6.0) - 2024-11-18
 ### Changed
