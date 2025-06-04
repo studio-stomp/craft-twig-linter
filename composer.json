@@ -30,6 +30,7 @@
         "codeception/module-asserts": "^3.0",
         "codeception/module-yii2": "^1.1",
         "craftcms/rector": "dev-main",
+        "phpunit/phpunit": "^11.5",
         "roave/security-advisories": "dev-latest",
         "studio-stomp/phpstan-craftcms": "dev-main",
         "vlucas/phpdotenv": "^5.4"
