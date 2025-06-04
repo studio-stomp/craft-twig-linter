@@ -11,12 +11,12 @@ declare(strict_types=1);
 
 namespace studiostomp\crafttwiglinter\console\controllers;
 
+use Composer\InstalledVersions;
 use craft\helpers\ArrayHelper;
 use craft\helpers\Console;
 use craft\web\Request;
 use craft\web\View;
 use Exception;
-use PackageVersions\Versions;
 use ReflectionProperty;
 use RuntimeException;
 use Sserbin\TwigLinter\Command\LintCommand;
@@ -110,7 +110,11 @@ final class LintController extends Controller
 
         $command = new LintCommand($webView->createTwig());
 
-        $app = new Application('twig-linter', Versions::getVersion('sserbin/twig-linter'));
+        $packageName = 'sserbin/twig-linter';
+        $version = InstalledVersions::getPrettyVersion($packageName);
+        $reference = InstalledVersions::getReference($packageName);
+
+        $app = new Application('twig-linter', $version . '@' . $reference);
         $app->setAutoExit(false);
         $app->add($command);
         $app->setDefaultCommand('lint');
